@@ -1,4 +1,3 @@
-
 package com.DynamicWebApp.entity;
 
 import jakarta.persistence.*;
@@ -9,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ourusers")
@@ -31,11 +32,29 @@ public class OurUsers implements UserDetails {
     private String name;
     private String password;
     private String city;
-    private String role;
+    private LocalDateTime createDate; // اضافه کردن فیلد CREATE_DATE
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> roles;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "user_roles_create_date",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
+    @Column(name = "create_date")
+    private List<LocalDateTime> rolesCreateDate; // اضافه کردن فیلدهای CREATE_DATE برای هر نقش
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getRoleCodeEng()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -62,9 +81,4 @@ public class OurUsers implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-//    @Override
-//    public String getPassword() {
-//        return password;
-//    }
 }

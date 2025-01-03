@@ -1,6 +1,7 @@
 package com.DynamicWebApp.dto;
 
 import com.DynamicWebApp.entity.OurUsers;
+import com.DynamicWebApp.entity.Role;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -26,5 +27,6 @@ public class ReqRes {
     private String password;
     private OurUsers ourUsers;
     private List<OurUsers> ourUsersList;
+    private List<Role> roles;  // اضافه کردن این خط برای لیست نقش‌ها
 
 }
